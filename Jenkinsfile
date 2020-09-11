@@ -1,38 +1,61 @@
-pipeline{
-agent any
-stages{
-	stage('clone repository'){
-		steps('clone '){
-		git 'https://github.com/sumitasarade/maven-project.git'
-		}
-	}
-	stage(' compile'){
-		steps('compile'){
-		withMaven(jdk: 'JAVA_HOME', maven: 'maven') {
-				sh 'mvn clean compile'
+pipeline
+{
+
+	agent any
+	
+		stages {
+				stage ('scm checkout') {
+					steps {
+						git 'https://github.com/sumitarade/maven-project.git'
+					}
+				}
+
+
+
+				stage ('code test') {
+				       steps {
+						withMaven(maven: 'maven') {
+							sh 'mvn test'
+						}
+				       }	       
+				}
+			
+			     stage ('code package') {
+				       steps {
+						withMaven(maven: 'maven') {
+							sh 'mvn package'
+						}
+				       }	       
+			      }
+			
+			
+			    stage ('code install') {
+				       steps {
+						withMaven(maven: 'maven') {
+							sh 'mvn install'
+						}
+				       }	       
+				}
+			
+			
+			
+			stage ('ssh tomcat') {
+				       steps {
+						sshPublisher(publishers: [sshPublisherDesc(configName: 'Tomcat', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/var/lib/tomcat/webapps', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '**/*.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+				       }	       
 			}
-		}
-	}
-	stage(test){
-		steps('test'){
-		withMaven(jdk: 'JAVA_HOME', maven: 'maven') {
-				sh 'mvn test'
-			}
-		}
-	}
-	stage('package'){
-		steps('package'){
-		withMaven(jdk: 'JAVA_HOME', maven: 'maven') {
-				sh 'mvn package'
-			}
-		}
-	}
-	stage('deploy to tomcat'){
-		steps('tomcat'){
-		sshagent(['tomcat']) {
-			sh 'scp -o StrictHostKeyChecking=no */target/*.war ec2-user@13.235.99.177:/var/lib/tomcat/webapps'
-			}
-		}
-	}
+			
+			
+			stage ('deploy to tomcat') {
+				steps {
+						sshagent (['172.31.43.210']) {
+						sh 'scp -o StrictHostKeyChecking=no */target/*.war ec2-user@13.235.99.177:/var/lib/tomcat/webapps'
+						}
+				}
+	
 }
+				       
+	        	}				       
+
+	
 }
