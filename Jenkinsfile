@@ -15,6 +15,9 @@ stages{
 	}
 	stage(test){
 		steps('test'){
+		withMaven(jdk: 'JAVA_HOME', maven: 'maven') {
+				sh 'mvn test'
+			}
 		}
 	}
 	stage('package'){
