@@ -48,7 +48,7 @@ pipeline
 			
 			stage ('deploy to tomcat') {
 				steps {
-						sshagent (['172.31.43.210']) {
+						sshagent (['tomcat']) {
 						sh 'scp -o StrictHostKeyChecking=no */target/*.war ec2-user@13.235.99.177:/var/lib/tomcat/webapps'
 						}
 				}
