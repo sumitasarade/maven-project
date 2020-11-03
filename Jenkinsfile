@@ -44,7 +44,7 @@ pipeline{
 		stage('Deploy to Tomcat'){
 			steps('Deploying'){
 				sshagent(['tomcat']) {
-					sh 'scp -o -rp -i mykynv.pem StrictHostKeyChecking=no */target/*.war ec2-user@54.80.207.230:/var/lib/tomcat/webapps' 
+					sh 'scp -o StrictHostKeyChecking=no */target/*.war ec2-user@54.80.207.230:/var/lib/tomcat/webapps' 
 				}
 			}
 		}
