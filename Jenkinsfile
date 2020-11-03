@@ -2,7 +2,7 @@ pipeline{
 	agent any
 	stages{
 		stage('Clone Repo'){
-			steps('Cloning Repo){
+			steps('Cloning Repo'){
 				git 'https://github.com/sumitasarade/maven-project.git'
 			}
 		}
